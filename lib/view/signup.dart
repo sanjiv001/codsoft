@@ -15,7 +15,7 @@ class _SignUpScreeenState extends State<SignUpScreeen> {
       body: Center(
         child: Container(
           width: 300,
-          height: 500,
+          height: 540,
           color: Colors.amber,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -30,17 +30,18 @@ class _SignUpScreeenState extends State<SignUpScreeen> {
                     fontWeight: FontWeight.w900),
               )),
               const SizedBox(
-                height: 50,
+                height: 20,
               ),
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: TextFormField(
                   decoration: InputDecoration(
-                    hintMaxLines: 6,
+                    hintMaxLines: 3,
                     hintText: "Username",
+                    labelText: "Username",
                     prefixIcon: const Icon(Icons.person_2_outlined),
                     hintStyle: const TextStyle(
-                        fontSize: 20, color: Color.fromARGB(255, 8, 12, 16)),
+                        fontSize: 10, color: Color.fromARGB(255, 8, 12, 16)),
                     fillColor: Color.fromARGB(255, 242, 242, 242),
                     filled: true,
                     focusColor: Colors.blue,
@@ -80,13 +81,15 @@ class _SignUpScreeenState extends State<SignUpScreeen> {
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: TextFormField(
+                  
                   keyboardType: TextInputType.emailAddress,
                   decoration: InputDecoration(
                     hintMaxLines: 6,
                     prefixIcon: Icon(Icons.email_outlined),
                     hintText: "Email",
+                    labelText: "Email",
                     hintStyle: const TextStyle(
-                        fontSize: 20, color: Color.fromARGB(255, 8, 12, 16)),
+                        fontSize: 10, color: Color.fromARGB(255, 8, 12, 16)),
                     fillColor: Color.fromARGB(255, 242, 242, 242),
                     filled: true,
                     focusColor: Colors.blue,
@@ -134,11 +137,13 @@ class _SignUpScreeenState extends State<SignUpScreeen> {
                     ),
                     hintMaxLines: 6,
                     hintText: "Password",
+                    labelText: "Password",
                     prefixIcon: IconButton(
                         onPressed: () {},
-                        icon: Icon(Icons.remove_red_eye_outlined)),
+                        icon: Icon(Icons.remove_red_eye_outlined)
+                        ),
                     hintStyle: const TextStyle(
-                        fontSize: 20, color: Color.fromARGB(255, 8, 12, 16)),
+                        fontSize: 10, color: Color.fromARGB(255, 8, 12, 16)),
                     fillColor: Color.fromARGB(255, 242, 242, 242),
                     filled: true,
                     focusColor: Colors.blue,
@@ -175,8 +180,60 @@ class _SignUpScreeenState extends State<SignUpScreeen> {
               const SizedBox(height: 10,),
               Padding(
                 padding: const EdgeInsets.all(8.0),
+                child: TextFormField(
+                  obscureText: true,
+                  obscuringCharacter: "*",
+                  decoration: InputDecoration(
+                  
+                    suffixIcon: const Icon(
+                      Icons.remove_red_eye_outlined,
+                    ),
+                    hintMaxLines: 6,
+                    hintText: " Confirm Password",
+                    labelText: " Confirm Password",
+                    prefixIcon: IconButton(
+                        onPressed: () {},
+                        icon: Icon(Icons.remove_red_eye_outlined)),
+                    hintStyle: const TextStyle(
+                        fontSize: 10, color: Color.fromARGB(255, 8, 12, 16)),
+                    fillColor: Color.fromARGB(255, 242, 242, 242),
+                    filled: true,
+                    focusColor: Colors.blue,
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(
+                        8,
+                      ),
+                      borderSide: const BorderSide(
+                        color: Colors.blue,
+                        width: 1,
+                      ),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(
+                        8,
+                      ),
+                      borderSide: const BorderSide(
+                        color: Colors.black12,
+                        width: 1,
+                      ),
+                    ),
+                    disabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(
+                        8,
+                      ),
+                      borderSide: const BorderSide(
+                        color: Color.fromARGB(31, 214, 68, 68),
+                        width: 1,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              SizedBox(height: 10),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
                 child: Container(
-                  height: 46,
+                  height: 40,
                   width: 160,
                   child: ElevatedButton(
                   
@@ -185,16 +242,16 @@ class _SignUpScreeenState extends State<SignUpScreeen> {
                       },
                       child: const Text(
                         
-                        "SignUP",
+                        "SignUp",
                         style: TextStyle(
                             color: Color.fromARGB(255, 12, 12, 12),
                             fontWeight: FontWeight.bold,
-                            fontSize: 20),
+                            fontSize: 16),
                       )),
                 ),
               ),
               const SizedBox(
-                height: 16,
+                height: 10,
               ),
               Padding(
                 padding: const EdgeInsets.all(10),

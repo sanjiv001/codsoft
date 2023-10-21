@@ -41,7 +41,8 @@ class _LoginScreenState extends State<LoginScreen> {
                 child: TextFormField(
                   decoration: InputDecoration(
                     hintMaxLines: 6,
-                    hintText: "Username",
+                    hintText: "Email",
+                    labelText: "Email",
                     prefixIcon: Icon(Icons.person_2_outlined),
                     hintStyle: const TextStyle(
                         fontSize: 20, color: Color.fromARGB(255, 8, 12, 16)),
@@ -93,6 +94,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                     hintMaxLines: 6,
                     hintText: "Password",
+                    labelText: "Password",
                     prefixIcon: IconButton(
                         onPressed: () {},
                         icon: Icon(Icons.remove_red_eye_outlined)),
