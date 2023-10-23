@@ -1,5 +1,7 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:todolist/view/add_taskscreen.dart';
+import 'package:todolist/view/login.dart';
 import 'package:todolist/view/tasklist.dart';
 
 class Homescreen extends StatefulWidget {
@@ -14,9 +16,40 @@ class _HomescreenState extends State<Homescreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+       bottomNavigationBar: NavigationBar(
+        onDestinationSelected: (int index) {
+          setState(() {
+            currentPageIndex = index;
+          });
+        },
+        indicatorColor: Colors.amber[800],
+        selectedIndex: currentPageIndex,
+        destinations: const <Widget>[
+          Padding(
+            padding: EdgeInsets.all(8.0),
+            child: NavigationDestination(
+              selectedIcon: Icon(Icons.home),
+              icon: Icon(Icons.home_outlined),
+              label: 'Home',
+            ),
+          ),
+          Padding(
+            padding: EdgeInsets.all(8.0),
+            child: NavigationDestination(
+              icon: Icon(Icons.add_rounded),
+              label: 'Add',
+            ),
+          ),
+          NavigationDestination(
+            selectedIcon: Icon(Icons.person_3_rounded),
+            icon: Icon(Icons.person_3_rounded),
+            label: 'profile',
+          ),
+        ],
+      ),
     drawer: Drawer(
   child: ListView(
-    padding: EdgeInsets.zero,
+    padding: EdgeInsets.zero, 
     children: [
       const DrawerHeader(
         decoration: BoxDecoration(
@@ -58,12 +91,26 @@ class _HomescreenState extends State<Homescreen> {
       appBar: AppBar(
         title: const Text("To Do ListApp"),
         titleSpacing: 4,
-        
         titleTextStyle: const TextStyle(color: Color.fromARGB(255, 17, 17, 17), fontSize: 20, fontWeight: FontWeight.bold),
-      
         centerTitle: true,
         actions: [
-          IconButton(onPressed: (){}, icon: const Icon(Icons.login_outlined))
+          IconButton(onPressed: (){
+            showDialog(context: context, builder: (context){
+              return AlertDialog(
+                title:const Text("Confirmation !!!"),
+                content: const Text("Are you sure you want to exit?"),
+                actions: [
+                  TextButton(onPressed: Navigator.of(context).pop, child: const Text("No")),
+                  TextButton(onPressed: (){
+                    FirebaseAuth.instance.signOut();
+                    Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context)=>LoginScreen()));
+                    Navigator.of(context).pop();
+                  }, child: Text("Yes")),
+                ],
+              );
+            }
+            );
+          }, icon: const Icon(Icons.logout_outlined), color: Colors.white24,)
         ],),
   
         floatingActionButton: FloatingActionButton(onPressed: (){
@@ -71,32 +118,17 @@ class _HomescreenState extends State<Homescreen> {
         },
         child: const Icon(Icons.add),),
       
-        body:Tasklist(),
-       bottomNavigationBar: NavigationBar(
-        onDestinationSelected: (int index) {
-          setState(() {
-            currentPageIndex = index;
-          });
-        },
-        indicatorColor: Colors.amber[800],
-        selectedIndex: currentPageIndex,
-        destinations: const <Widget>[
-          NavigationDestination(
-            selectedIcon: Icon(Icons.home),
-            icon: Icon(Icons.home_outlined),
-            label: 'Home',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.add_rounded),
-            label: 'Add',
-          ),
-          NavigationDestination(
-            selectedIcon: Icon(Icons.person_3_rounded),
-            icon: Icon(Icons.person_3_rounded),
-            label: 'profile',
-          ),
-        ],
-      ),
+         body: <Widget>[
+      Tasklist(),
+      AddTaskScreen(),
+       
+        Container(
+          color: Colors.white70,
+          alignment: Alignment.center,
+          child: const Text('Page 3'),
+        ),
+      ][currentPageIndex],
+      
         
         
     );

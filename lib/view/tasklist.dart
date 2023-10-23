@@ -17,8 +17,7 @@ class _TasklistState extends State<Tasklist> {
             child: Container(
               width: 340,
               height: 800,
-              color: Colors.amberAccent,
-          
+               color:Color.fromARGB(255, 128, 190, 240),
             ),
           ),
         );
