@@ -1,4 +1,11 @@
+// ignore_for_file: use_build_context_synchronously
+
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:ndialog/ndialog.dart';
+import 'package:todolist/view/homepage.dart';
 import 'package:todolist/view/login.dart';
 
 class SignUpScreeen extends StatefulWidget {
@@ -9,13 +16,18 @@ class SignUpScreeen extends StatefulWidget {
 }
 
 class _SignUpScreeenState extends State<SignUpScreeen> {
+  var fullNameController = TextEditingController();
+  var emailController = TextEditingController();
+  var passwordController = TextEditingController();
+  var confirmController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
         child: Container(
           width: 300,
-          height: 540,
+          height: 510,
           color: Colors.amber,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -35,6 +47,7 @@ class _SignUpScreeenState extends State<SignUpScreeen> {
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: TextFormField(
+                  controller: fullNameController,
                   decoration: InputDecoration(
                     hintMaxLines: 3,
                     hintText: "Username",
@@ -76,12 +89,12 @@ class _SignUpScreeenState extends State<SignUpScreeen> {
                 ),
               ),
               const SizedBox(
-                height: 10,
+                height: 5,
               ),
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: TextFormField(
-                  
+                  controller: emailController,
                   keyboardType: TextInputType.emailAddress,
                   decoration: InputDecoration(
                     hintMaxLines: 6,
@@ -124,11 +137,12 @@ class _SignUpScreeenState extends State<SignUpScreeen> {
                 ),
               ),
               const SizedBox(
-                height: 10,
+                height: 5,
               ),
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: TextFormField(
+                  controller: passwordController,
                   obscureText: true,
                   obscuringCharacter: "*",
                   decoration: InputDecoration(
@@ -140,8 +154,7 @@ class _SignUpScreeenState extends State<SignUpScreeen> {
                     labelText: "Password",
                     prefixIcon: IconButton(
                         onPressed: () {},
-                        icon: Icon(Icons.remove_red_eye_outlined)
-                        ),
+                        icon: Icon(Icons.remove_red_eye_outlined)),
                     hintStyle: const TextStyle(
                         fontSize: 10, color: Color.fromARGB(255, 8, 12, 16)),
                     fillColor: Color.fromARGB(255, 242, 242, 242),
@@ -177,14 +190,16 @@ class _SignUpScreeenState extends State<SignUpScreeen> {
                   ),
                 ),
               ),
-              const SizedBox(height: 10,),
+              const SizedBox(
+                height: 5,
+              ),
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: TextFormField(
+                  controller: confirmController,
                   obscureText: true,
                   obscuringCharacter: "*",
                   decoration: InputDecoration(
-                  
                     suffixIcon: const Icon(
                       Icons.remove_red_eye_outlined,
                     ),
@@ -229,19 +244,101 @@ class _SignUpScreeenState extends State<SignUpScreeen> {
                   ),
                 ),
               ),
-              SizedBox(height: 10),
+              SizedBox(height: 5),
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Container(
                   height: 40,
-                  width: 160,
+                  width: 120,
                   child: ElevatedButton(
-                  
-                      onPressed: () {
-                       
+                      onPressed: () async {
+                        var fullName = fullNameController.text.trim();
+                        var email = emailController.text.trim();
+                        var password = passwordController.text.trim();
+                        var confirmPass = confirmController.text.trim();
+
+                        if (fullName.isEmpty ||
+                            email.isEmpty ||
+                            password.isEmpty ||
+                            confirmPass.isEmpty) {
+                          // show error toast
+
+                          Fluttertoast.showToast(msg: 'Please fill all fields');
+                          return;
+                        }
+
+                        if (password.length < 6) {
+                          // show error toast
+                          Fluttertoast.showToast(
+                              msg:
+                                  'Weak Password, at least 6 characters are required');
+
+                          return;
+                        }
+
+                        if (password != confirmPass) {
+                          // show error toast
+                          Fluttertoast.showToast(msg: 'Passwords do not match');
+
+                          return;
+                        }
+
+                        // request to firebase auth
+
+                        ProgressDialog progressDialog = ProgressDialog(
+                          context,
+                          title: const Text('Signing Up'),
+                          message: const Text('Please wait'),
+                        );
+                        progressDialog.show();
+                        // try and catch
+                        try {
+                          FirebaseAuth auth = FirebaseAuth.instance;
+                          UserCredential userCredential =
+                              await auth.createUserWithEmailAndPassword(
+                                  email: email, password: password);
+
+                          if (userCredential.user != null) {
+                            // store user information in Realtime database
+                            DatabaseReference userRef = FirebaseDatabase
+                                .instance
+                                .reference()
+                                .child('users');
+
+                            String uid = userCredential.user!.uid;
+                            int dt = DateTime.now().millisecondsSinceEpoch;
+                            await userRef.child(uid).set({
+                              'fullName': fullName,
+                              'email': email,
+                              'dt': dt,
+                              'uid': uid,
+                            });
+                             progressDialog.dismiss();
+                            Fluttertoast.showToast(msg: 'Success');
+                            Navigator.of(context).pushReplacement(
+                                MaterialPageRoute(
+                                    builder: (context) {return Homescreen();
+                                    }));
+                          } else {
+                            Fluttertoast.showToast(msg: 'Failed');
+                          }
+
+                          progressDialog.dismiss();
+                        } on FirebaseAuthException catch (e) {
+                          progressDialog.dismiss();
+                          if (e.code == 'email-already-in-use') {
+                            Fluttertoast.showToast(
+                                msg: 'Email is already in Use');
+                          } else if (e.code == 'weak-password') {
+                            Fluttertoast.showToast(msg: 'Password is weak');
+                          }
+                        } catch (e) {
+                          progressDialog.dismiss();
+                          Fluttertoast.showToast(msg: 'Something went wrong');
+                        }
+                        ;
                       },
                       child: const Text(
-                        
                         "SignUp",
                         style: TextStyle(
                             color: Color.fromARGB(255, 12, 12, 12),
@@ -251,7 +348,7 @@ class _SignUpScreeenState extends State<SignUpScreeen> {
                 ),
               ),
               const SizedBox(
-                height: 10,
+                height: 5,
               ),
               Padding(
                 padding: const EdgeInsets.all(10),
@@ -270,7 +367,10 @@ class _SignUpScreeenState extends State<SignUpScreeen> {
                         const SizedBox(width: 4),
                         InkWell(
                             onTap: () {
-                              Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>LoginScreen()));
+                              Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => LoginScreen()));
                             },
                             child: const Text(
                               "LogIn",

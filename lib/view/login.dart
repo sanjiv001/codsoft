@@ -1,4 +1,8 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:ndialog/ndialog.dart';
+import 'package:todolist/view/homepage.dart';
 import 'package:todolist/view/signup.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -9,6 +13,8 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  var emailController = TextEditingController();
+  var passwordController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -39,6 +45,7 @@ class _LoginScreenState extends State<LoginScreen> {
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: TextFormField(
+                  controller: emailController,
                   decoration: InputDecoration(
                     hintMaxLines: 6,
                     hintText: "Email",
@@ -86,6 +93,7 @@ class _LoginScreenState extends State<LoginScreen> {
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: TextFormField(
+                  controller: passwordController,
                   obscureText: true,
                   obscuringCharacter: "*",
                   decoration: InputDecoration(
@@ -139,19 +147,65 @@ class _LoginScreenState extends State<LoginScreen> {
                 child: Container(
                   height: 46,
                   width: 160,
-                  child: ElevatedButton(
-                  
-                       onPressed: () {
-                       
-                      },
-                      child: const Text(
-                        
-                        "Login",
-                        style: TextStyle(
-                            color: Color.fromARGB(255, 12, 12, 12),
-                            fontWeight: FontWeight.bold,
-                            fontSize: 20),
-                      )),
+                child: ElevatedButton(onPressed: () async {
+
+              var email = emailController.text.trim();
+              var password = passwordController.text.trim();
+              if( email.isEmpty || password.isEmpty ){
+                // show error toast
+                Fluttertoast.showToast(msg: 'Please fill all fields');
+                return;
+              }
+
+              // request to firebase auth
+
+              ProgressDialog progressDialog = ProgressDialog(
+                context,
+                title: const  Text('Logging In'),
+                message: const Text('Please wait'),
+              );
+
+              progressDialog.show();
+
+              try{
+
+                FirebaseAuth auth = FirebaseAuth.instance;
+
+                UserCredential userCredential = await auth.signInWithEmailAndPassword(email: email, password: password);
+
+                if( userCredential.user != null ){
+
+
+                   progressDialog.dismiss();
+                   Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context){
+
+                     return  Homescreen();
+                   }));
+                }
+
+
+
+              }
+              on FirebaseAuthException catch ( e ) {
+
+                progressDialog.dismiss();
+
+                if( e.code == 'user-not-found'){
+                  Fluttertoast.showToast(msg: 'User not found');
+
+                }else if( e.code == 'wrong-password'){
+                  Fluttertoast.showToast(msg: 'Wrong password');
+
+                }
+
+              }
+              catch(e){
+                Fluttertoast.showToast(msg: 'Something went wrong');
+                progressDialog.dismiss();
+              }
+
+
+            }, child:const  Text('Login')),
                 ),
               ),
               const SizedBox(

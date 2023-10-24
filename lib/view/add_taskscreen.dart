@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 
+
 class AddTaskScreen extends StatefulWidget {
   const AddTaskScreen({super.key});
 
@@ -77,11 +78,8 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                       obscureText: true,
                       obscuringCharacter: "*",
                       decoration: InputDecoration(
-                      
                         hintMaxLines: 6,
                         hintText: "Enter Task Detail",
-                      
-                      
                         hintStyle: const TextStyle(
                             fontSize: 20, color: Color.fromARGB(255, 8, 12, 16)),
                         fillColor: Color.fromARGB(255, 242, 242, 242),
