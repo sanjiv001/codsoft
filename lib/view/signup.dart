@@ -1,7 +1,6 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:ndialog/ndialog.dart';
@@ -298,38 +297,41 @@ class _SignUpScreeenState extends State<SignUpScreeen> {
                               await auth.createUserWithEmailAndPassword(
                                   email: email, password: password);
 
-                          if (userCredential.user != null) {
+                      
                             // store user information in Realtime database
-                            DatabaseReference userRef = FirebaseDatabase
-                                .instance
-                                .reference()
-                                .child('users');
+                            // DatabaseReference userRef = FirebaseDatabase
+                            //     .instance
+                            //     .reference()
+                            //     .child('users');
 
-                            String uid = userCredential.user!.uid;
-                            int dt = DateTime.now().millisecondsSinceEpoch;
-                            await userRef.child(uid).set({
-                              'fullName': fullName,
-                              'email': email,
-                              'dt': dt,
-                              'uid': uid,
-                            });
-                             progressDialog.dismiss();
-                            Fluttertoast.showToast(msg: 'Success');
-                            Navigator.of(context).pushReplacement(
-                                MaterialPageRoute(
-                                    builder: (context) {return Homescreen();
-                                    }));
-                          } else {
-                            Fluttertoast.showToast(msg: 'Failed');
-                          }
+                            // String uid = userCredential.user!.uid;
+                            // int dt = DateTime.now().millisecondsSinceEpoch;
+                            // await userRef.child(uid).set({
+                            //   'fullName':fullName,
+                            //   'password':password,
+                            //   'email': email,
+                            //   'dt': dt,
+                            //   'uid': uid,
+                            //   'confirmPass':confirmPass,
+                            // });
+                            
+                             if( userCredential.user != null ){
 
-                          progressDialog.dismiss();
+
+                   progressDialog.dismiss();
+                   Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context){
+
+                     return  Homescreen();
+                   }));
+                }
+                          
                         } on FirebaseAuthException catch (e) {
                           progressDialog.dismiss();
                           if (e.code == 'email-already-in-use') {
                             Fluttertoast.showToast(
                                 msg: 'Email is already in Use');
                           } else if (e.code == 'weak-password') {
+                            
                             Fluttertoast.showToast(msg: 'Password is weak');
                           }
                         } catch (e) {

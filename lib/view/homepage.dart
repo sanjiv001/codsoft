@@ -103,9 +103,10 @@ class _HomescreenState extends State<Homescreen> {
                 actions: [
                   TextButton(onPressed: Navigator.of(context).pop, child: const Text("No")),
                   TextButton(onPressed: (){
+                    Navigator.of(context).pop();
                     FirebaseAuth.instance.signOut();
                     Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context)=>LoginScreen()));
-                    Navigator.of(context).pop();
+                    
                   }, child: Text("Yes")),
                 ],
               );
