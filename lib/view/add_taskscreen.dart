@@ -1,6 +1,9 @@
 // ignore_for_file: dead_code
 
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 
 class AddTaskScreen extends StatefulWidget {
@@ -11,6 +14,9 @@ class AddTaskScreen extends StatefulWidget {
 }
 
 class _AddTaskScreenState extends State<AddTaskScreen> {
+  var taskController = TextEditingController();
+  var taskdetailcontroller = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -28,11 +34,11 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
             Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: TextFormField(
+                      controller: taskController,
                       decoration: InputDecoration(
                         hintMaxLines: 6,
                         hintText: "Enter Task",
                        
-                        
                         hintStyle: const TextStyle(
                             fontSize: 20, color: Color.fromARGB(255, 8, 12, 16)),
                         fillColor: Color.fromARGB(255, 242, 242, 242),
@@ -75,9 +81,9 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: TextFormField(
-                      obscureText: true,
-                      obscuringCharacter: "*",
+                      controller: taskdetailcontroller,
                       decoration: InputDecoration(
+                        
                         hintMaxLines: 6,
                         hintText: "Enter Task Detail",
                         hintStyle: const TextStyle(
@@ -123,9 +129,46 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                       width: 160,
                       child: ElevatedButton(
                       
-                           onPressed: () {
                            
-                          },
+                            onPressed: () async {
+                var task= taskController.text;
+                var taskdetail = taskController.text;
+                if (task.isEmpty||taskdetail.isEmpty) {
+                  Fluttertoast.showToast(msg: 'Please provide task Information');
+                  return;
+                }
+
+                User? user = FirebaseAuth.instance.currentUser;
+                if (user == null) {
+                  return;
+                }
+
+                var databaseRef = FirebaseDatabase.instance.reference();
+
+                String? key =
+                    databaseRef.child('tasks').child(user.uid).push().key;
+
+                try{
+                  await databaseRef
+                      .child('tasks')
+                      .child(user.uid)
+                      .child(key!)
+                      .set({
+                    'nodeId' : key,
+                    'task': task,
+                    'taskdetail': taskdetail,
+                    'dt': DateTime.now().millisecondsSinceEpoch,
+
+                  });
+
+                  Fluttertoast.showToast(msg: 'Task Added');
+                  Navigator.of(context).pop();
+
+                } catch (e ){
+                  Fluttertoast.showToast(msg: 'Something went wrong');
+                }
+
+              },      
                           child: const Text(
                             
                             "ADD",

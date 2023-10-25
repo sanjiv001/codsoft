@@ -1,6 +1,7 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:ndialog/ndialog.dart';
@@ -298,22 +299,22 @@ class _SignUpScreeenState extends State<SignUpScreeen> {
                                   email: email, password: password);
 
                       
-                            // store user information in Realtime database
-                            // DatabaseReference userRef = FirebaseDatabase
-                            //     .instance
-                            //     .reference()
-                            //     .child('users');
+                          //  store user information in Realtime database
+                            DatabaseReference userRef = FirebaseDatabase
+                                .instance
+                                .reference()
+                                .child('users');
 
-                            // String uid = userCredential.user!.uid;
-                            // int dt = DateTime.now().millisecondsSinceEpoch;
-                            // await userRef.child(uid).set({
-                            //   'fullName':fullName,
-                            //   'password':password,
-                            //   'email': email,
-                            //   'dt': dt,
-                            //   'uid': uid,
-                            //   'confirmPass':confirmPass,
-                            // });
+                            String uid = userCredential.user!.uid;
+                            int dt = DateTime.now().millisecondsSinceEpoch;
+                            await userRef.child(uid).set({
+                              'fullName':fullName,
+                              'password':password,
+                              'email': email,
+                              'dt': dt,
+                              'uid': uid,
+                              
+                            });
                             
                              if( userCredential.user != null ){
 

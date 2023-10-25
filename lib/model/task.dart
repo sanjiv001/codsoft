@@ -34,3 +34,26 @@
 // })
 
 // }
+
+class TaskModel {
+  late String nodeId;
+  late String task;
+  late String taskdetail;
+  late int dt;
+
+  TaskModel({
+    required this.nodeId,
+    required this.task,
+    required this.taskdetail,
+    required this.dt,
+  });
+
+  factory TaskModel.fromMap(Map<String, dynamic> map) {
+    return TaskModel(
+      nodeId: map['nodeId'],
+      task: map['task'],
+      taskdetail: map['taskdetail'],
+      dt: map['dt'],
+    );
+  }
+}
