@@ -272,17 +272,14 @@ class _SignUpScreeenState extends State<SignUpScreeen> {
                           Fluttertoast.showToast(
                               msg:
                                   'Weak Password, at least 6 characters are required');
-
                           return;
                         }
-
                         if (password != confirmPass) {
                           // show error toast
                           Fluttertoast.showToast(msg: 'Passwords do not match');
 
                           return;
                         }
-
                         // request to firebase auth
 
                         ProgressDialog progressDialog = ProgressDialog(
@@ -297,42 +294,34 @@ class _SignUpScreeenState extends State<SignUpScreeen> {
                           UserCredential userCredential =
                               await auth.createUserWithEmailAndPassword(
                                   email: email, password: password);
-
-                      
                           //  store user information in Realtime database
-                            DatabaseReference userRef = FirebaseDatabase
-                                .instance
-                                .reference()
-                                .child('users');
+                          DatabaseReference userRef = FirebaseDatabase.instance
+                              .ref()
+                              .child('users');
 
-                            String uid = userCredential.user!.uid;
-                            int dt = DateTime.now().millisecondsSinceEpoch;
-                            await userRef.child(uid).set({
-                              'fullName':fullName,
-                              'password':password,
-                              'email': email,
-                              'dt': dt,
-                              'uid': uid,
-                              
-                            });
+                          String uid = userCredential.user!.uid;
+                          int dt = DateTime.now().millisecondsSinceEpoch;
+                          await userRef.child(uid).set({
+                            'fullName': fullName,
+                            'email': email,
+                            'uid': uid,
+                            'dt': dt,
                             
-                             if( userCredential.user != null ){
+                          });
 
-
-                   progressDialog.dismiss();
-                   Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context){
-
-                     return  Homescreen();
-                   }));
-                }
-                          
+                          if (userCredential.user != null) {
+                            progressDialog.dismiss();
+                            Navigator.of(context).pushReplacement(
+                                MaterialPageRoute(builder: (context) {
+                              return Homescreen();
+                            }));
+                          }
                         } on FirebaseAuthException catch (e) {
                           progressDialog.dismiss();
                           if (e.code == 'email-already-in-use') {
                             Fluttertoast.showToast(
                                 msg: 'Email is already in Use');
                           } else if (e.code == 'weak-password') {
-                            
                             Fluttertoast.showToast(msg: 'Password is weak');
                           }
                         } catch (e) {
