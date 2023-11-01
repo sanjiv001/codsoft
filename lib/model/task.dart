@@ -14,7 +14,7 @@ class TaskModel {
 
   factory TaskModel.fromMap(Map<String, dynamic> map) {
     return TaskModel(
-      taskId: map['nodeId'],
+      taskId: map['taskId'],
       task: map['task'],
       taskdetail: map['taskdetail'],
       dt: map['dt'],
