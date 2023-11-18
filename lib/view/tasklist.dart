@@ -64,8 +64,8 @@ class _TaskListScreenState extends State<TaskListScreen> {
                                         child:  ListTile(
                                           
                                             onTap: () {
-                                            //  Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context)=>UpdateTaskScreen())
-                                              Navigator.of(context).pop();
+                                           //  Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context)=>UpdateTaskScreen(TaskModel :taskModel)));
+                                           //   result: Navigator.of(context).pop();
                                             },
                                             leading:const  Icon(Icons.edit
                                             ),

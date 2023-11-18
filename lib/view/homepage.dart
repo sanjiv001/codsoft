@@ -134,13 +134,14 @@ class _HomescreenState extends State<Homescreen> {
         ],
       ),
       body: <Widget>[
-        TaskListScreen(),
-        AddTaskScreen(),
-        Container(
+         Container(
           color: Colors.white70,
           alignment: Alignment.center,
           child: const Text('Page 3'),
         ),
+        AddTaskScreen(),
+       
+        TaskListScreen(),
       ][currentPageIndex],
     );
   }
